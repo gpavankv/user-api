@@ -2,6 +2,35 @@ const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
+(function () {
+    User.findOne({email: 'admin@siteadmin.com'})
+        .then((user) => {
+            // console.log(user);
+            if(user !== null){
+                if(user.email === 'admin@siteadmin.com'){
+                    // console.log('user exists');
+                }
+            } else {
+                const adminUser = new User();
+                adminUser.firstName = 'Admin';
+                adminUser.lastName = 'Admin';
+                adminUser.email = 'admin@siteadmin.com';
+                adminUser.password = 'admin';
+                bcrypt.genSalt(8).then(salt => {
+                    bcrypt.hash(adminUser.password, salt)
+                        .then(hash => {
+                            adminUser.password = hash;
+                            User.create(adminUser)
+                                .then(() => {
+                                    // console.log('created');
+                                });
+                        });
+                });
+            }
+
+        });
+
+})();
 
 module.exports = {
 
